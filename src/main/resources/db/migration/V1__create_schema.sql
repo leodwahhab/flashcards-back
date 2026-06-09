@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE "user" (
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -6,9 +6,9 @@ CREATE TABLE users (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE flashcards (
+CREATE TABLE flashcard (
     id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id),
+    user_id BIGINT NOT NULL REFERENCES "user"(id),
     text_content TEXT,
     image_url VARCHAR(2048),
     answer TEXT NOT NULL,
@@ -21,19 +21,19 @@ CREATE TABLE flashcards (
     CONSTRAINT chk_content CHECK (text_content IS NOT NULL OR image_url IS NOT NULL)
 );
 
-CREATE TABLE flashcard_groups (
+CREATE TABLE flashcard_group (
     id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id),
+    user_id BIGINT NOT NULL REFERENCES "user"(id),
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE flashcard_group_assignments (
-    flashcard_id BIGINT NOT NULL REFERENCES flashcards(id) ON DELETE CASCADE,
-    group_id BIGINT NOT NULL REFERENCES flashcard_groups(id) ON DELETE CASCADE,
+CREATE TABLE flashcard_group_assignment (
+    flashcard_id BIGINT NOT NULL REFERENCES flashcard(id) ON DELETE CASCADE,
+    group_id BIGINT NOT NULL REFERENCES flashcard_group(id) ON DELETE CASCADE,
     PRIMARY KEY (flashcard_id, group_id)
 );
 
-CREATE INDEX idx_flashcards_user_id ON flashcards(user_id);
-CREATE INDEX idx_flashcard_groups_user_id ON flashcard_groups(user_id);
+CREATE INDEX idx_flashcard_user_id ON flashcard(user_id);
+CREATE INDEX idx_flashcard_group_user_id ON flashcard_group(user_id);

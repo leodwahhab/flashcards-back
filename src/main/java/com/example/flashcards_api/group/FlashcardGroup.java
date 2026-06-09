@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "flashcard_groups")
+@Table(name = "flashcard_group")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,7 +28,7 @@ public class FlashcardGroup {
     private String name;
 
     @ManyToMany
-    @JoinTable(name = "flashcard_group_assignments",
+    @JoinTable(name = "flashcard_group_assignment",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "flashcard_id"))
     private Set<Flashcard> flashcards = new HashSet<>();
