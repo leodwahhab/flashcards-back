@@ -2,8 +2,8 @@ spring:
   application:
     name: flashcards-api
   datasource:
-    url: jdbc:{DATABASE_URL:postgresql://localhost:5432/mydatabase}
-    username: {DATABASE_URL:postgres}
+    url: jdbc:{DATABASE_URL:postgresql://localhost:5432/flashcards}
+    username: {DATABASE_USER:postgres}
     password: {DATABASE_PASSWORD:postgres}
   jpa:
     show-sql: {SHOW_SQL:true}
