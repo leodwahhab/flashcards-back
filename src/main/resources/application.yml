@@ -2,18 +2,18 @@ spring:
   application:
     name: flashcards-api
   datasource:
-    url: jdbc:postgresql://{DATABASE_URL:localhost:5432/mydatabase}
-    username: {DATABASE_URL:aa}
+    url: jdbc:{DATABASE_URL:postgresql://localhost:5432/mydatabase}
+    username: {DATABASE_URL:postgres}
     password: {DATABASE_PASSWORD:postgres}
   jpa:
-    show-sql: true
+    show-sql: {SHOW_SQL:true}
     properties:
       hibernate:
         format_sql: true
     hibernate:
       ddl-auto: validate
   flyway:
-    enabled: true
+    enabled: {FLYWAY_ENABLED:true}
 
 jwt:
   secret: dGhpc0lzQVNlY3JldEtleUZvckpXVFRva2VuR2VuZXJhdGlvbjMyQnl0ZXM=
