@@ -1,11 +1,14 @@
 package com.example.flashcards_api.flashcard;
 
+import com.example.flashcards_api.group.FlashcardGroup;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "flashcard")
@@ -42,6 +45,9 @@ public class Flashcard {
 
     @Column(name = "attempts_incorrect", nullable = false)
     private int attemptsIncorrect = 0;
+
+    @ManyToMany(mappedBy = "flashcards")
+    private Set<FlashcardGroup> groups = new HashSet<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
