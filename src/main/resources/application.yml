@@ -2,19 +2,19 @@ spring:
   application:
     name: flashcards-api
   datasource:
-    url: jdbc:{DATABASE_URL:postgresql://localhost:5432/flashcards}
-    username: {DATABASE_USER:postgres}
-    password: {DATABASE_PASSWORD:postgres}
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/flashcards}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
   jpa:
-    show-sql: {SHOW_SQL:true}
+    show-sql: ${SHOW_SQL:true}
     properties:
       hibernate:
         format_sql: true
     hibernate:
       ddl-auto: validate
   flyway:
-    enabled: {FLYWAY_ENABLED:true}
+    enabled: ${FLYWAY_ENABLED:true}
 
 jwt:
-  secret: dGhpc0lzQVNlY3JldEtleUZvckpXVFRva2VuR2VuZXJhdGlvbjMyQnl0ZXM=
-  expiration: 86400000
+  secret: ${JWT_SECRET:dGhpc0lzQVNlY3JldEtleUZvckpXVFRva2VuR2VuZXJhdGlvbjMyQnl0ZXM=}
+  expiration: ${JWT_EXPIRATION:86400000}
