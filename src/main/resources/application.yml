@@ -2,7 +2,7 @@ spring:
   application:
     name: flashcards-api
   datasource:
-    url: jdbc:${DATABASE_URL:jdbc:postgresql://localhost:5432/flashcards}
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/flashcards}
     username: ${DATABASE_USER:postgres}
     password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: ${DATABASE_DRIVER:org.postgresql.Driver}
