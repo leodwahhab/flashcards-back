@@ -3,8 +3,8 @@ package com.example.flashcards_api.study;
 import com.example.flashcards_api.note.Note;
 
 /**
- * Renderiza pergunta e resposta de um card a partir do note. A implementação padrão é
- * {@link SimpleCardContentRenderer}; pode ser substituída por uma baseada em {@code card.CardRenderer}.
+ * Renderiza pergunta e resposta de um card a partir do note. A implementação é
+ * {@link CardRendererAdapter}, baseada em {@code card.CardRenderer}.
  */
 public interface CardContentRenderer {
 

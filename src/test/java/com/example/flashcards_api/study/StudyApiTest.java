@@ -292,7 +292,7 @@ class StudyApiTest extends AbstractApiIntegrationTest {
 
         JsonNode q = queue(user, "");
         assertThat(q.get("cards").get(0).get("question").asText()).isEqualTo("[...] e b e c");
-        assertThat(q.get("cards").get(0).get("answer").asText()).isEqualTo("a e b e c\nextra");
+        assertThat(q.get("cards").get(0).get("answer").asText()).isEqualTo("<b>a</b> e b e c\n\nextra");
 
         answer(user, c0.getId(), 3);
         assertThat(testData.reload(c1.getId()).getBuriedUntil()).isEqualTo(NEXT_DAY);
