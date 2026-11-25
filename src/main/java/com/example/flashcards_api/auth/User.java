@@ -1,18 +1,20 @@
 package com.example.flashcards_api.auth;
 
+import com.example.flashcards_api.common.Auditable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
+/**
+ * Usuário da aplicação. Os timestamps ({@code createdAt}/{@code updatedAt}) vêm de {@link Auditable}.
+ */
 @Entity
 @Table(name = "\"user\"")
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,20 +25,4 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

@@ -10,5 +10,15 @@ spring:
     enabled: false
 
 jwt:
-  secret: dGhpc0lzQVNlY3JldEtleUZvckpXVFRva2VuR2VuZXJhdGlvbjMyQnl0ZXM=
+  # Segredo exclusivo de testes (nunca usar fora deles).
+  secret: dGVzdC1vbmx5LXNlY3JldC1rZXktZm9yLXVuaXQtdGVzdHMtMDEyMzQ1Njc4OQ==
+  allow-insecure-default: false
   expiration: 86400000
+
+app:
+  study:
+    zone: UTC
+    day-start-hour: 4
+  media:
+    dir: ./target/test-media
+    max-bytes: 10485760
