@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +31,21 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     /** Notes do usuário com o mesmo tipo e chave de duplicidade. */
     List<Note> findAllByUserIdAndNoteTypeAndDupKey(Long userId, NoteType noteType, String dupKey);
+
+    /** Notes do usuário dentre os ids informados, já carregando as tags (uma única consulta). */
+    @EntityGraph(attributePaths = "tags")
+    @Query("select n from Note n where n.userId = :userId and n.id in :ids")
+    List<Note> findAllWithTagsByIdInAndUserId(@Param("ids") Collection<Long> ids, @Param("userId") Long userId);
+
+    /** Chaves de duplicidade com 2+ notes do usuário (exceto a chave do texto vazio), por menor id do grupo. */
+    @Query("select new com.example.flashcards_api.note.DuplicateKey(n.noteType, n.dupKey) from Note n "
+            + "where n.userId = :userId and n.dupKey <> :emptyKey "
+            + "group by n.noteType, n.dupKey having count(n) > 1 order by min(n.id)")
+    List<DuplicateKey> findDuplicateKeys(@Param("userId") Long userId, @Param("emptyKey") String emptyKey,
+                                         Pageable pageable);
+
+    /** Notes do usuário cujas chaves de duplicidade estão na lista, por id. */
+    List<Note> findAllByUserIdAndDupKeyInOrderByIdAsc(Long userId, Collection<String> dupKeys);
 
     /** Indica se já existe note com o mesmo tipo e chave de duplicidade. */
     boolean existsByUserIdAndNoteTypeAndDupKey(Long userId, NoteType noteType, String dupKey);
