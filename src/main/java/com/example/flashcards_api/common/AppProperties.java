@@ -15,12 +15,29 @@ import java.time.ZoneId;
  *
  * @param study configuração do dia lógico de estudo
  * @param media configuração de armazenamento de mídia
+ * @param admin usuário inicial opcional, criado na subida a partir de variáveis de ambiente
  */
 @Validated
 @ConfigurationProperties("app")
 public record AppProperties(
         @Valid @DefaultValue Study study,
-        @Valid @DefaultValue Media media) {
+        @Valid @DefaultValue Media media,
+        @Valid @DefaultValue Admin admin) {
+
+    /**
+     * Usuário inicial. Só é criado se {@code email} e {@code password} estiverem ambos preenchidos
+     * ({@code APP_ADMIN_EMAIL} / {@code APP_ADMIN_PASSWORD}); nunca sobrescreve um usuário existente.
+     *
+     * @param email    e-mail do usuário inicial
+     * @param password senha em texto puro; fica só no ambiente, nunca no repositório
+     */
+    public record Admin(String email, String password) {
+
+        /** @return {@code true} se há e-mail e senha configurados */
+        public boolean configured() {
+            return email != null && !email.isBlank() && password != null && !password.isBlank();
+        }
+    }
 
     /**
      * Dia lógico de estudo.

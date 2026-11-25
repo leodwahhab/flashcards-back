@@ -122,6 +122,7 @@ Todas são lidas em `src/main/resources/application.yml`.
 | `APP_STUDY_DAY_START_HOUR` | `4` | Hora (0..23) em que o dia lógico começa |
 | `APP_MEDIA_DIR` | `./data/media` | Diretório dos arquivos de mídia (`<dir>/<userId>/<uuid>.<ext>`) |
 | `APP_MEDIA_MAX_BYTES` | `10485760` (10 MB) | Tamanho máximo de upload de mídia **e** do CSV de importação |
+| `APP_ADMIN_EMAIL` / `APP_ADMIN_PASSWORD` | — | Opcionais, devem vir juntas. Criam o usuário inicial na subida (com baralho padrão) se o e-mail ainda não existir; nunca alteram um usuário existente. Não commite a senha. |
 
 ### Propriedades `app.*`
 
