@@ -1,6 +1,8 @@
 package com.example.flashcards_api.card;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -11,7 +13,19 @@ import java.util.Optional;
 /**
  * Acesso a {@link Card}, sempre filtrado por usuário.
  */
-public interface CardRepository extends JpaRepository<Card, Long> {
+public interface CardRepository extends JpaRepository<Card, Long>, JpaSpecificationExecutor<Card> {
+
+    /** Cards de um note do usuário, ordenados por ordinal. */
+    List<Card> findAllByNoteIdAndUserIdOrderByOrdinalAsc(Long noteId, Long userId);
+
+    /** Ids dos notes (dentre os informados) que ainda possuem ao menos um card. */
+    @Query("select distinct c.noteId from Card c where c.noteId in :noteIds")
+    List<Long> findNoteIdsWithCards(@Param("noteIds") Collection<Long> noteIds);
+
+    /** Remove, em lote, todos os cards de um note do usuário (o banco só faz cascata via FK em produção). */
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("delete from Card c where c.noteId = :noteId and c.userId = :userId")
+    int deleteAllByNoteIdAndUserId(@Param("noteId") Long noteId, @Param("userId") Long userId);
 
     /** Busca card do usuário pelo id; vazio se inexistente ou de outro usuário. */
     Optional<Card> findByIdAndUserId(Long id, Long userId);
