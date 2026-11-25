@@ -4,6 +4,7 @@ import com.example.flashcards_api.common.BusinessRuleException;
 import com.example.flashcards_api.common.ConflictException;
 import com.example.flashcards_api.deck.UserDefaultsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserDefaultsService userDefaultsService;
     private final LoginRateLimiter loginRateLimiter;
+    private final ApplicationEventPublisher events;
 
     /**
      * Cadastra o usuário (e-mail normalizado em minúsculas), cria suas opções e baralho padrão e devolve o token.
@@ -95,6 +97,7 @@ public class AuthService {
 
     /**
      * Exclui a conta do usuário; os dados dependentes são removidos pelo {@code ON DELETE CASCADE} do banco.
+     * Publica {@link AccountDeletedEvent} para que outros módulos limpem o que está fora do banco (ex.: arquivos).
      *
      * @param userId  id do usuário
      * @param request confirmação com a senha
@@ -108,6 +111,7 @@ public class AuthService {
         }
         userRepository.delete(user);
         userRepository.flush();
+        events.publishEvent(new AccountDeletedEvent(userId));
     }
 
     private User loadUser(Long userId) {

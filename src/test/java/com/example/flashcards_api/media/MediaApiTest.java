@@ -44,6 +44,21 @@ class MediaApiTest extends AbstractApiIntegrationTest {
         registry.add("app.media.max-bytes", () -> "2048");
     }
 
+    @Test
+    void deletingTheAccountRemovesTheUsersMediaFiles() throws Exception {
+        TestUser user = registerAndLogin();
+        assertThat(upload(user, "cat.png", "image/png", png(50)).getResponse().getStatus()).isEqualTo(201);
+        Path userDir = DIR.resolve(String.valueOf(user.userId()));
+        assertThat(userDir).isDirectory();
+
+        mvc.perform(authed(user, MockMvcRequestBuilders.delete("/api/v1/account"))
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content(json(java.util.Map.of("password", PASSWORD))))
+                .andExpect(status().isNoContent());
+
+        assertThat(userDir).doesNotExist();
+    }
+
     private static byte[] png(int size) {
         byte[] data = new byte[size];
         byte[] magic = {(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
