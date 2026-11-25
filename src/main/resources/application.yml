@@ -21,8 +21,15 @@ spring:
     compose:
       enabled: ${DOCKER_COMPOSE_ENABLED:false}
 
+# JWT_SECRET (Base64, minimo 32 bytes decodificados) e obrigatorio: sem ele a aplicacao nao sobe.
+# Gere com: openssl rand -base64 48
+# Propriedades adicionais lidas com valor padrao no codigo (nao precisam constar aqui):
+#   app.cors.allowed-origins  lista separada por virgulas (padrao http://localhost:3000,http://localhost:5173)
+#   app.docs.public           Swagger/OpenAPI sem autenticacao (padrao true; use false em producao)
+#   app.login.max-failures / app.login.window-minutes  limite de falhas de login (padrao 10 em 15 min, por instancia)
 jwt:
-  secret: ${JWT_SECRET:dGhpc0lzQVNlY3JldEtleUZvckpXVFRva2VuR2VuZXJhdGlvbjMyQnl0ZXM=}
+  secret: ${JWT_SECRET:}
+  allow-insecure-default: ${JWT_ALLOW_INSECURE_DEFAULT:false}
   expiration: ${JWT_EXPIRATION:86400000}
 
 app:
