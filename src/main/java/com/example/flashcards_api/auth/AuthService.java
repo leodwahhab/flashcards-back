@@ -45,7 +45,7 @@ public class AuthService {
         requireBcryptLength(request.password());
         String email = normalize(request.email());
         if (userRepository.existsByEmail(email)) {
-            throw new ConflictException("Email already registered");
+            throw new ConflictException("E-mail já cadastrado");
         }
         User user = new User();
         user.setEmail(email);
@@ -72,7 +72,7 @@ public class AuthService {
         User user = userRepository.findByEmail(normalize(request.email())).orElse(null);
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
             loginRateLimiter.recordFailure(request.email(), clientIp);
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
         }
         loginRateLimiter.recordSuccess(request.email(), clientIp);
         return new AuthResponse(jwtService.generateToken(user));
@@ -116,7 +116,7 @@ public class AuthService {
 
     private User loadUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não encontrado"));
     }
 
     private static void requireBcryptLength(String password) {

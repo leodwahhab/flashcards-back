@@ -25,8 +25,8 @@ import java.util.UUID;
  * Armazenamento de mídia (imagem/áudio) por usuário. Os arquivos ficam em {@code app.media.dir/<userId>/<uuid>.<ext>}.
  * <p>
  * Limitação conhecida: se a transação falhar depois de gravar o arquivo, ou se o disco falhar na exclusão, podem
- * sobrar arquivos órfãos no disco (sem linha no banco). Eles não são acessíveis pela API. Remover os arquivos do
- * usuário ao excluir a conta ({@code DELETE /account}) é uma melhoria futura: hoje só as linhas caem em cascata.
+ * sobrar arquivos órfãos no disco (sem linha no banco). Eles não são acessíveis pela API. Ao excluir a conta
+ * ({@code DELETE /account}) as linhas caem em cascata e {@link MediaAccountCleanup} remove o diretório do usuário.
  */
 @Service
 @RequiredArgsConstructor

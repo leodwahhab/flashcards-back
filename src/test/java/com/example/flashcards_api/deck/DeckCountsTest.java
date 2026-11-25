@@ -176,7 +176,7 @@ class DeckCountsTest extends AbstractApiIntegrationTest {
     }
 
     @Test
-    void parentLimitCapsTheSumOfChildren() throws Exception {
+    void dailyLimitAppliesToEachDeckOwnCardsNotToTheSubtree() throws Exception {
         TestUser u = registerAndLogin();
         long pai = testData.deck(u.userId(), "Pai").getId();
         long filho = testData.deck(u.userId(), "Filho", pai).getId();
@@ -187,7 +187,7 @@ class DeckCountsTest extends AbstractApiIntegrationTest {
                 .andReturn()).get("id").asLong();
         mvc.perform(patchAs(u, "/api/v1/decks/{id}", Map.of("optionsId", optionsId), pai)).andExpect(status().isOk());
         assertCounts(node(u, "Pai::Filho"), 4, 0, 0);
-        assertCounts(node(u, "Pai"), 2, 0, 0);
+        assertCounts(node(u, "Pai"), 4, 0, 0); // o limite do pai (2) vale só para os cards do próprio pai
     }
 
     private ReviewLog log(TestUser u, long deckId, CardState before, Instant at) {

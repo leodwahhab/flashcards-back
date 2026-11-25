@@ -90,17 +90,18 @@ public class DefaultDeckCountsProvider implements DeckCountsProvider {
         long newTotal = own[0];
         long learning = own[1];
         long review = own[2];
+        // o limite diário vale para os cards do próprio baralho, como na fila de estudo; o pai só soma os filhos
+        DeckOptions o = options.get(deck.getOptionsId());
+        if (o != null) {
+            long[] done = doneToday.getOrDefault(deck.getId(), new long[2]);
+            newTotal = Math.min(newTotal, Math.max(0, o.getNewPerDay() - done[0]));
+            review = Math.min(review, Math.max(0, o.getReviewsPerDay() - done[1]));
+        }
         for (Deck child : children.getOrDefault(deck.getId(), List.of())) {
             DeckCounts c = aggregate(child, children, eligible, doneToday, options, result);
             newTotal += c.newCount();
             learning += c.learningCount();
             review += c.reviewCount();
-        }
-        DeckOptions o = options.get(deck.getOptionsId());
-        long[] done = doneToday.getOrDefault(deck.getId(), new long[2]);
-        if (o != null) {
-            newTotal = Math.min(newTotal, Math.max(0, o.getNewPerDay() - done[0]));
-            review = Math.min(review, Math.max(0, o.getReviewsPerDay() - done[1]));
         }
         DeckCounts counts = new DeckCounts(newTotal, learning, review);
         result.put(deck.getId(), counts);

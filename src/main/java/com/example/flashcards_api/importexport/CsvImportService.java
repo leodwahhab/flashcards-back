@@ -66,7 +66,7 @@ public class CsvImportService {
 
     private static final int MAX_DECK_DEPTH = 8;
     private static final int DUP_QUERY_CHUNK = 500;
-    private static final Pattern CLOZE = Pattern.compile("\\{\\{c([1-9]\\d{0,2})::");
+    private static final Pattern CLOZE = Pattern.compile("\\{\\{c([1-9]\\d?)::");
     private static final Set<String> HEADER_NAMES = Set.of("front", "back", "tags", "deck", "notetype", "note_type",
             "type", "imageurl", "image_url", "image", "frente", "verso");
 
@@ -359,6 +359,9 @@ public class CsvImportService {
         }
         if (imageUrl.length() > 2048) {
             throw new RowException("imageUrl excede 2048 caracteres");
+        }
+        if (type != NoteType.CLOZE && back.isBlank()) {
+            throw new RowException("O verso (back) está vazio");
         }
         if (type == NoteType.CLOZE && clozeNumbers(front).isEmpty()) {
             throw new RowException("Nota CLOZE sem lacuna no formato {{c1::resposta}}");
