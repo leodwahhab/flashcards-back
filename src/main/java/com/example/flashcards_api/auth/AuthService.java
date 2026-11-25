@@ -42,17 +42,34 @@ public class AuthService {
      */
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        requireBcryptLength(request.password());
-        String email = normalize(request.email());
-        if (userRepository.existsByEmail(email)) {
+        User user = createUser(request.email(), request.password());
+        if (user == null) {
             throw new ConflictException("E-mail já cadastrado");
+        }
+        return new AuthResponse(jwtService.generateToken(user));
+    }
+
+    /**
+     * Cria o usuário com suas opções e baralho padrão, se o e-mail ainda não existir.
+     *
+     * @param rawEmail    e-mail (normalizado em minúsculas)
+     * @param rawPassword senha em texto puro
+     * @return o usuário criado, ou {@code null} se o e-mail já estava cadastrado
+     * @throws BusinessRuleException se a senha exceder 72 bytes
+     */
+    @Transactional
+    public User createUser(String rawEmail, String rawPassword) {
+        requireBcryptLength(rawPassword);
+        String email = normalize(rawEmail);
+        if (userRepository.existsByEmail(email)) {
+            return null;
         }
         User user = new User();
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setPassword(passwordEncoder.encode(rawPassword));
         userRepository.save(user);
         userDefaultsService.ensureDefaults(user.getId());
-        return new AuthResponse(jwtService.generateToken(user));
+        return user;
     }
 
     /**
