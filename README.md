@@ -206,3 +206,14 @@ recurso de outro usuário responde 404.
 - Backup assíncrono (incluindo mídia).
 - Armazenamento de mídia em S3 (ou compatível).
 - Rate limit de login distribuído.
+
+## Deploy com Docker (VM única)
+
+`compose.prod.yaml` sobe Postgres, a API e o Caddy (HTTPS automático via Let's Encrypt). Só as portas 80/443 ficam expostas.
+
+```bash
+cp .env.prod.example .env.prod     # preencha DOMAIN, senhas e JWT_SECRET; o arquivo é ignorado pelo git
+docker compose --env-file .env.prod -f compose.prod.yaml up -d --build
+```
+
+O `DOMAIN` precisa apontar (registro A) para o IP da VM antes da primeira subida. Dados em volumes Docker (`pgdata`, `media`): faça backup deles.
