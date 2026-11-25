@@ -7,7 +7,8 @@ spring:
     password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: ${DATABASE_DRIVER:org.postgresql.Driver}
   jpa:
-    show-sql: ${SHOW_SQL:true}
+    show-sql: ${SHOW_SQL:false}
+    open-in-view: false
     properties:
       hibernate:
         format_sql: true
@@ -23,3 +24,11 @@ spring:
 jwt:
   secret: ${JWT_SECRET:dGhpc0lzQVNlY3JldEtleUZvckpXVFRva2VuR2VuZXJhdGlvbjMyQnl0ZXM=}
   expiration: ${JWT_EXPIRATION:86400000}
+
+app:
+  study:
+    zone: ${APP_STUDY_ZONE:UTC}
+    day-start-hour: ${APP_STUDY_DAY_START_HOUR:4}
+  media:
+    dir: ${APP_MEDIA_DIR:./data/media}
+    max-bytes: ${APP_MEDIA_MAX_BYTES:10485760}

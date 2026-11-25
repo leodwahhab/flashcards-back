@@ -12,3 +12,11 @@ spring:
 jwt:
   secret: dGhpc0lzQVNlY3JldEtleUZvckpXVFRva2VuR2VuZXJhdGlvbjMyQnl0ZXM=
   expiration: 86400000
+
+app:
+  study:
+    zone: UTC
+    day-start-hour: 4
+  media:
+    dir: ./target/test-media
+    max-bytes: 10485760

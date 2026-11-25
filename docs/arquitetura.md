@@ -71,7 +71,7 @@ Convenções: `BIGSERIAL` como PK, `timestamptz`, `ON DELETE CASCADE` nas FKs de
 `created_at`, `updated_at`. Índice único `(user_id, COALESCE(parent_id,0), lower(name))`.
 
 **`note`**: `id`, `user_id`, `note_type varchar(20)` (CHECK nos 4 valores), `front text`, `back text`,
-`image_url varchar(2048)`, `guid varchar(36)` único, `dup_key varchar(64)` (hash do `front` normalizado: sem HTML,
+`image_url varchar(2048)`, `guid varchar(36)` único, `dup_key varchar(64)` (SHA-256 hex do `front` normalizado, `Texts.dupKey`: sem HTML,
 minúsculas, espaços colapsados), `created_at`, `updated_at`. CHECK `front` não vazio ou `image_url` não nulo.
 Índice `(user_id, note_type, dup_key)`.
 
@@ -97,7 +97,7 @@ Na ordem:
 1. `deck_options` padrão (`is_default=true`, nome `Padrão`) e baralho `Padrão` para **todo** usuário.
 2. Cada `flashcard_group` vira um `deck` (raiz) com as opções padrão do usuário.
 3. Cada `flashcard` vira 1 `note` `BASIC` (`front = coalesce(text_content,'')`, `back = answer`, `image_url`,
-   `guid = gen_random_uuid()`) + 1 `card` ordinal 0. Cards sem `last_shown_date` ficam `NEW`; os demais ficam `REVIEW`
+   `guid = gen_random_uuid()`; se não houver texto nem imagem, `front = "(sem conteúdo)"`) + 1 `card` ordinal 0 (`position = id` legado). Cards sem `last_shown_date` ficam `NEW`; os demais ficam `REVIEW`
    com `interval_days` 1 / 6 / 21 conforme `dominance_level` low / medium / high, `reps = attempts_correct + attempts_incorrect`,
    `last_review_at = last_shown_date`, `due_at = now()`.
 4. Um card que estava em vários grupos fica no baralho do grupo de **menor id**; os outros grupos viram tags
@@ -182,3 +182,13 @@ Todos exigem JWT, exceto `auth/register`, `auth/login` e a documentação.
 
 Os endpoints `/flashcards`, `/groups`, `/sessions` e `/study/flashcards*` foram removidos. Equivalências:
 flashcard → note + card, grupo → deck, `DominanceLevel` → estado SM-2, `StudySession` → `review_log`.
+
+## 9. Notas de implementação da fundação
+
+- Auditoria (`created_at`/`updated_at`) via Spring Data (`@CreatedDate`/`@LastModifiedDate`, superclasse `common.Auditable`),
+  alimentada pelo `Clock` da aplicação (`AppConfig`); entidades guardam `userId`, `deckId`, `noteId`, `parentId` e
+  `optionsId` como `Long` simples (sem associações JPA), exceto `Note.tags` (`@ManyToMany`).
+- `DeckOptions.defaultOptions` mapeia a coluna `is_default`. `Rating` é gravado como `smallint` (1..4) e serializado como número.
+- Grupos legados com nome repetido (ou igual a `Padrão`) viram baralhos com sufixo ` (n)`; e-mails legados são normalizados
+  com `lower(btrim())`.
+- Novos usuários recebem opções e baralho `Padrão` em `UserDefaultsService.ensureDefaults(userId)` (chamado no registro).
